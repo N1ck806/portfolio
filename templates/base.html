@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#f6f1e7">
+  <title>{% block title %}Khorezm Folio{% endblock %}</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/static/css/base.css">
+  {% block head_extra %}{% endblock %}
+</head>
+<body>
+
+  <header class="site-header" id="site-header">
+    <div class="site-header-inner">
+      <a href="/" class="logo" aria-label="Khorezm Folio — на главную">
+        <span class="logo-mark" aria-hidden="true"></span>
+        <span>Khorezm Folio</span>
+        <span class="logo-sub">Archive</span>
+      </a>
+
+      <nav class="site-nav" aria-label="Основная навигация">
+        <a href="/#works" class="nav-link">Работы</a>
+        <a href="/#about" class="nav-link">Обо мне</a>
+        <a href="/#contact" class="nav-link">Контакты</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="site-main">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-left">
+        <span class="footer-brand">Khorezm Folio</span>
+        <span class="footer-copy">© 2026 · Personal Portfolio</span>
+      </div>
+      <nav class="footer-links" aria-label="Ссылки">
+        <a href="mailto:you@example.com">Email</a>
+        <a href="https://github.com/" target="_blank" rel="noopener">GitHub</a>
+      </nav>
+      <p class="footer-note">Built with Python</p>
+    </div>
+  </footer>
+
+  <script src="/static/js/main.js" defer></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

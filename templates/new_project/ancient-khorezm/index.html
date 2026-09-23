@@ -1,0 +1,1752 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Древний Хорезм · Ташпулатов Доминик · IST-952R</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Unbounded:wght@300;400;500;600;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+/* ═════ ТОКЕНЫ ═════ */
+:root {
+  --ink:#0f0b06;
+  --sand:#f4ead0;
+  --sand-soft:#e6d4ab;
+  --gold:#d4a24c;
+  --gold-bright:#f4c96a;
+  --gold-deep:#a97d2c;
+  --lazurite:#3a6fa8;
+  --terracotta:#c4674a;
+  --fg:#f4ead0;
+  --fg-mute:#b8a578;
+  --fg-dim:#7a6a4c;
+  --line:rgba(212,162,76,.22);
+  --line-soft:rgba(212,162,76,.10);
+  --line-hard:rgba(212,162,76,.45);
+  --font-title:'Cormorant Garamond','Times New Roman',serif;
+  --font-accent:'Unbounded','Inter',sans-serif;
+  --font-body:'Inter',system-ui,sans-serif;
+  --ease:cubic-bezier(.22,.8,.22,1);
+  --pad-x:clamp(20px,5vw,80px);
+  --pad-y:clamp(18px,4vh,60px);
+}
+
+* { box-sizing:border-box; margin:0; padding:0; }
+*::selection { background:rgba(212,162,76,.4); color:#0f0b06; }
+
+html, body {
+  background:var(--ink);
+  color:var(--fg);
+  height:100%;
+  overflow:hidden;
+  font-family:var(--font-body);
+  font-size:16px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+img, svg { display:block; max-width:100%; }
+a { color:inherit; text-decoration:none; }
+button { font:inherit; cursor:pointer; border:0; background:none; color:inherit; }
+
+/* ═════ ФОН ═════ */
+.bg { position:fixed; inset:0; z-index:0; overflow:hidden; pointer-events:none; }
+.bg-svg { position:absolute; inset:0; width:100%; height:100%; }
+.bg-stars {
+  position:absolute; inset:0;
+  background-image:
+    radial-gradient(1px 1px at 8% 14%, rgba(255,240,200,.75) 50%, transparent 51%),
+    radial-gradient(1px 1px at 22% 30%, rgba(255,240,200,.55) 50%, transparent 51%),
+    radial-gradient(1.4px 1.4px at 39% 10%, rgba(255,240,200,.85) 50%, transparent 51%),
+    radial-gradient(1px 1px at 55% 22%, rgba(255,240,200,.6) 50%, transparent 51%),
+    radial-gradient(1.2px 1.2px at 71% 8%, rgba(255,240,200,.7) 50%, transparent 51%),
+    radial-gradient(1px 1px at 84% 26%, rgba(255,240,200,.5) 50%, transparent 51%),
+    radial-gradient(1px 1px at 94% 44%, rgba(255,240,200,.5) 50%, transparent 51%),
+    radial-gradient(1px 1px at 15% 48%, rgba(255,240,200,.45) 50%, transparent 51%);
+  animation:twinkle 7s ease-in-out infinite alternate;
+}
+@keyframes twinkle { from { opacity:.5; } to { opacity:1; } }
+.bg-grain {
+  position:absolute; inset:0;
+  opacity:.04; mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
+.bg-tone {
+  position:absolute; inset:0;
+  background:radial-gradient(circle at 50% 40%, rgba(58,111,168,.18), transparent 60%);
+  opacity:0;
+  transition:opacity 1.4s var(--ease), background 1.4s var(--ease);
+  pointer-events:none;
+}
+
+/* ═════ СЛАЙДЫ ═════ */
+.deck { position:relative; z-index:1; height:100vh; width:100%; overflow:hidden; }
+
+.slide {
+  position:absolute; inset:0;
+  padding:var(--pad-y) var(--pad-x);
+  display:grid;
+  grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);
+  gap:clamp(24px,4vw,64px);
+  align-items:stretch;
+  opacity:0; visibility:hidden;
+  transform:translateY(24px) scale(.98);
+  transition:opacity .7s var(--ease), transform .9s var(--ease), visibility .7s;
+  will-change:opacity, transform;
+}
+.slide.is-active { opacity:1; visibility:visible; transform:none; }
+.slide.is-prev { transform:translateY(-24px) scale(.98); }
+.slide.is-next { transform:translateY(24px) scale(.98); }
+.slide.reverse { grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr); }
+.slide.reverse .visual { order:-1; }
+
+@media (max-width:900px) {
+  .slide, .slide.reverse {
+    grid-template-columns:1fr; grid-template-rows:auto 1fr; gap:18px;
+  }
+  .slide.reverse .visual { order:0; }
+}
+
+/* ═════ ЛЕВАЯ КОЛОНКА — ТЕКСТ ═════ */
+.text {
+  display:flex; flex-direction:column; justify-content:center;
+  min-height:0;
+}
+
+/* орнаментальный "eyebrow" */
+.eyebrow {
+  display:inline-flex; align-items:center; gap:14px;
+  font-family:var(--font-accent); font-weight:300;
+  font-size:.68rem; letter-spacing:.32em; text-transform:uppercase;
+  color:var(--gold); margin-bottom:clamp(12px,2.4vh,22px);
+}
+.eyebrow::before {
+  content:''; width:34px; height:1px;
+  background:linear-gradient(90deg, transparent, var(--gold));
+}
+.eyebrow .num {
+  font-family:var(--font-title); font-style:italic; font-weight:600;
+  font-size:1rem; letter-spacing:0; color:var(--sand-soft);
+}
+
+/* Заголовок с орнаментом под ним */
+.head-wrap { position:relative; margin-bottom:clamp(10px,2vh,18px); }
+.head-wrap::after {
+  content:''; display:block;
+  margin-top:clamp(10px,1.6vh,16px);
+  width:120px; height:14px;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 14'><line x1='0' y1='7' x2='46' y2='7' stroke='%23d4a24c' stroke-width='1' opacity='.7'/><line x1='74' y1='7' x2='120' y2='7' stroke='%23d4a24c' stroke-width='1' opacity='.7'/><path d='M60,1 L67,7 L60,13 L53,7 Z' fill='none' stroke='%23d4a24c' stroke-width='1'/><circle cx='60' cy='7' r='1.6' fill='%23d4a24c'/></svg>");
+  background-repeat:no-repeat; background-size:contain;
+}
+
+.slide h2 {
+  font-family:var(--font-title); font-weight:500;
+  font-size:clamp(1.8rem,3.6vw,3.2rem);
+  line-height:1.05; letter-spacing:-.022em; color:var(--sand);
+}
+.slide h2 em { font-style:italic; font-weight:400; color:var(--gold); }
+.slide h2 .thin { font-weight:300; color:var(--fg-mute); }
+
+.lead {
+  font-family:var(--font-title); font-style:italic;
+  font-size:clamp(.95rem,1.15vw,1.15rem);
+  line-height:1.5; color:var(--fg-mute); max-width:56ch;
+  margin-bottom:clamp(12px,2vh,20px);
+  padding-left:18px;
+  border-left:2px solid var(--line-hard);
+}
+
+/* Основной текст с буквицей */
+.body-copy {
+  font-family:var(--font-title);
+  font-size:clamp(.98rem,1.05vw,1.1rem);
+  line-height:1.65; color:var(--fg); max-width:62ch;
+}
+.body-copy p + p { margin-top:10px; }
+.body-copy p:first-of-type::first-letter {
+  font-family:var(--font-title);
+  font-size:3.2em; line-height:.85;
+  float:left; padding:6px 10px 0 0;
+  color:var(--gold); font-weight:600; font-style:italic;
+}
+.body-copy strong { color:var(--gold-bright); font-weight:600; }
+.body-copy em { font-style:italic; color:var(--gold); }
+
+/* ═════ ПРАВАЯ КОЛОНКА — ВИЗУАЛ ═════ */
+.visual {
+  position:relative;
+  display:flex; flex-direction:column;
+  gap:14px; min-height:0; height:100%;
+}
+
+/* Одиночная большая карточка занимает максимум */
+.visual--single .photo-card--hero { flex:1 1 auto; }
+
+/* Большая карточка — крупная, занимает основное место */
+.photo-card {
+  position:relative;
+  border-radius:16px;
+  border:2px solid var(--line-hard);
+  overflow:hidden;
+  background:linear-gradient(180deg, #14100a, #0a0704);
+  box-shadow:
+    0 24px 60px -30px rgba(0,0,0,.9),
+    0 0 0 1px rgba(212,162,76,.08) inset;
+  transition:border-color .4s, transform .4s var(--ease), box-shadow .4s;
+  cursor:pointer;
+  display:flex; flex-direction:column;
+  min-height:0;
+}
+.photo-card:hover {
+  border-color:var(--gold);
+  box-shadow:0 30px 70px -30px rgba(0,0,0,1), 0 0 0 1px rgba(212,162,76,.25) inset;
+}
+
+/* Ключ: картинка вписана целиком (contain), ничего не срезано */
+.photo-frame {
+  position:relative;
+  width:100%; flex:1 1 auto;
+  min-height:0;
+  display:flex; align-items:center; justify-content:center;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(40,28,14,.9), #0a0704 75%);
+  overflow:hidden;
+}
+.photo-frame img {
+  width:100%; height:100%;
+  object-fit:contain;
+  display:block;
+  transition:transform 1.2s var(--ease), filter .8s var(--ease);
+  filter:sepia(.10) contrast(1.05) brightness(.97);
+}
+.photo-card:hover .photo-frame img {
+  transform:scale(1.02);
+  filter:sepia(0) contrast(1.08) brightness(1.02);
+}
+
+/* Высоты: большая карточка — большая; пара — поменьше */
+.photo-card--hero { min-height:clamp(260px,42vh,520px); }
+.photo-card--small { min-height:clamp(160px,24vh,290px); }
+
+/* Подпись-плашка снизу */
+.photo-cap {
+  position:relative;
+  padding:12px 16px 14px;
+  background:linear-gradient(180deg, rgba(15,11,6,.94), rgba(20,16,10,1));
+  border-top:1px solid var(--line);
+  pointer-events:none;
+  flex-shrink:0;
+}
+.photo-cap-title {
+  font-family:var(--font-title); font-style:italic;
+  font-size:1rem; color:var(--sand); line-height:1.3;
+}
+.photo-cap-title::before {
+  content:'❖  '; color:var(--gold); font-style:normal; font-size:.72rem;
+}
+.photo-cap-sub {
+  display:block; margin-top:4px;
+  font-family:var(--font-body); font-size:.78rem;
+  color:var(--fg-mute); line-height:1.4; letter-spacing:.01em;
+}
+
+/* Иконка "описание" */
+.photo-card::after {
+  content:'⊕  описание';
+  position:absolute; top:12px; right:14px;
+  font-family:var(--font-accent); font-size:.56rem;
+  letter-spacing:.18em; text-transform:uppercase;
+  color:var(--gold);
+  background:rgba(15,11,6,.88);
+  border:1px solid var(--line);
+  padding:5px 10px; border-radius:8px;
+  opacity:0; transition:opacity .3s;
+  pointer-events:none; z-index:3;
+}
+.photo-card:hover::after { opacity:1; }
+
+/* Пара карточек */
+.photo-grid-2 {
+  display:grid; grid-template-columns:1fr 1fr; gap:12px;
+  flex:0 0 auto;
+}
+@media (max-width:600px) {
+  .photo-grid-2 { grid-template-columns:1fr; }
+}
+
+/* ═════ SVG-ЭЛЕМЕНТЫ В ТЕКСТЕ ═════ */
+
+/* Карточка-факт с медальоном */
+.fact {
+  position:relative;
+  display:grid; grid-template-columns:auto 1fr; gap:16px; align-items:center;
+  padding:14px 18px;
+  border-radius:12px;
+  border:1px solid var(--line-soft);
+  background:
+    linear-gradient(90deg, rgba(212,162,76,.07), rgba(212,162,76,.02) 60%, transparent),
+    rgba(212,162,76,.02);
+  transition:border-color .3s, background .3s, transform .4s var(--ease);
+}
+.fact:hover {
+  border-color:var(--line);
+  transform:translateX(4px);
+}
+.fact-num {
+  position:relative;
+  display:grid; place-items:center;
+  width:64px; height:64px;
+  font-family:var(--font-title); font-weight:700; font-style:italic;
+  font-size:clamp(1.1rem,1.5vw,1.4rem); line-height:1;
+  color:var(--gold);
+}
+.fact-num::before {
+  content:'';
+  position:absolute; inset:0;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' fill='none' stroke='%23d4a24c' stroke-width='1'><path d='M32,4 L44,16 L56,16 L56,48 L44,48 L32,60 L20,48 L8,48 L8,16 L20,16 Z' opacity='.55'/><circle cx='32' cy='32' r='24' opacity='.35'/></svg>");
+  background-repeat:no-repeat; background-size:contain;
+}
+.fact-num span { position:relative; z-index:1; }
+.fact-body h4 {
+  font-family:var(--font-title); font-weight:600;
+  font-size:1.02rem; color:var(--sand); margin-bottom:2px;
+}
+.fact-body p { font-size:.85rem; color:var(--fg-mute); line-height:1.45; }
+
+.fact-stack { display:flex; flex-direction:column; gap:10px; margin-top:14px; }
+
+/* Цитата с орнаментальными кавычками */
+.quote {
+  position:relative;
+  padding:22px 26px 22px 44px;
+  border-radius:16px;
+  border:1px solid var(--line);
+  background:
+    radial-gradient(circle at 0% 0%, rgba(212,162,76,.14), transparent 50%),
+    linear-gradient(180deg, rgba(212,162,76,.05), rgba(212,162,76,.008));
+  overflow:hidden;
+}
+.quote::before {
+  content:'';
+  position:absolute; top:12px; left:14px;
+  width:22px; height:22px;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23d4a24c'><path d='M9,6 C5,8 3,12 3,16 C3,19 5,21 7,21 C9,21 10,19 10,17 C10,15 9,13.5 7.5,13 C8,10.5 9.5,8.5 11,7.5 Z M20,6 C16,8 14,12 14,16 C14,19 16,21 18,21 C20,21 21,19 21,17 C21,15 20,13.5 18.5,13 C19,10.5 20.5,8.5 22,7.5 Z'/></svg>");
+  background-repeat:no-repeat; background-size:contain;
+  opacity:.85;
+}
+.quote-text {
+  font-family:var(--font-title); font-style:italic;
+  font-size:clamp(1rem,1.2vw,1.18rem);
+  line-height:1.55; color:var(--fg);
+}
+.quote-src {
+  display:block; margin-top:10px;
+  font-family:var(--font-accent); font-size:.62rem;
+  letter-spacing:.24em; text-transform:uppercase; color:var(--gold);
+}
+.quote.dark {
+  border-color:rgba(196,103,74,.4);
+  background:
+    radial-gradient(circle at 0% 0%, rgba(196,103,74,.16), transparent 50%),
+    linear-gradient(180deg, rgba(196,103,74,.06), rgba(196,103,74,.01));
+}
+.quote.dark::before {
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23c4674a'><path d='M9,6 C5,8 3,12 3,16 C3,19 5,21 7,21 C9,21 10,19 10,17 C10,15 9,13.5 7.5,13 C8,10.5 9.5,8.5 11,7.5 Z M20,6 C16,8 14,12 14,16 C14,19 16,21 18,21 C20,21 21,19 21,17 C21,15 20,13.5 18.5,13 C19,10.5 20.5,8.5 22,7.5 Z'/></svg>");
+}
+.quote.dark .quote-src { color:#c4674a; }
+.quote.dark .quote-text { color:#f0d8c8; }
+
+/* Блок наследия */
+.legacy {
+  display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:16px;
+}
+@media (max-width:700px) { .legacy { grid-template-columns:1fr; } }
+.legacy-item {
+  position:relative;
+  padding:18px 16px 16px;
+  border-radius:12px;
+  border:1px solid var(--line-soft);
+  background:linear-gradient(180deg, rgba(212,162,76,.05), rgba(212,162,76,.01));
+  transition:transform .4s var(--ease), border-color .4s, background .4s;
+  overflow:hidden;
+}
+.legacy-item::before {
+  content:'';
+  position:absolute; top:8px; right:8px;
+  width:22px; height:22px;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d4a24c' stroke-width='1'><path d='M12 2 L14 9 L21 9 L15.5 13 L17.5 20 L12 16 L6.5 20 L8.5 13 L3 9 L10 9 Z' opacity='.5'/></svg>");
+  background-repeat:no-repeat; background-size:contain;
+  opacity:.6;
+}
+.legacy-item:hover {
+  transform:translateY(-4px);
+  border-color:var(--line-hard);
+  background:linear-gradient(180deg, rgba(212,162,76,.09), rgba(212,162,76,.02));
+}
+.legacy-item h4 {
+  font-family:var(--font-title); font-weight:600;
+  font-size:1.1rem; color:var(--sand); margin-bottom:4px;
+}
+.legacy-item p { font-size:.83rem; color:var(--fg-mute); line-height:1.45; }
+
+/* Источники */
+.sources { display:grid; gap:10px; margin-top:8px; }
+.source {
+  position:relative;
+  display:grid; grid-template-columns:auto 1fr; gap:14px;
+  align-items:baseline; padding:12px 16px 12px 20px;
+  border-radius:12px;
+  border:1px solid var(--line-soft);
+  background:rgba(212,162,76,.03);
+  transition:border-color .3s, background .3s;
+}
+.source::before {
+  content:'';
+  position:absolute; left:0; top:0; bottom:0; width:3px;
+  background:linear-gradient(180deg, var(--gold), transparent);
+  border-radius:12px 0 0 12px;
+  opacity:.55;
+}
+.source:hover { border-color:var(--line); background:rgba(212,162,76,.06); }
+.source-label {
+  font-family:var(--font-accent); font-size:.58rem;
+  letter-spacing:.24em; text-transform:uppercase;
+  color:var(--gold); white-space:nowrap;
+}
+.source-text {
+  font-family:var(--font-title); font-size:.96rem;
+  color:var(--fg); line-height:1.45;
+}
+
+/* ═════ ОБЛОЖКА ═════ */
+.cover { display:block; text-align:center; padding:var(--pad-y) var(--pad-x); }
+.cover-inner {
+  max-width:1000px; margin:0 auto; height:100%;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:clamp(16px,2.6vh,28px);
+}
+.cover-sigil {
+  width:clamp(80px,10vw,130px); height:clamp(80px,10vw,130px);
+  color:var(--gold); animation:sigilSpin 60s linear infinite;
+}
+@keyframes sigilSpin { to { transform:rotate(360deg); } }
+.cover-title {
+  font-family:var(--font-title); font-weight:500;
+  font-size:clamp(2.8rem,8vw,7rem); line-height:.94;
+  letter-spacing:-.03em; color:var(--sand);
+}
+.cover-title em {
+  display:block; font-style:italic; font-weight:400;
+  color:var(--gold); font-size:.36em;
+  letter-spacing:0; margin-top:10px;
+}
+.cover-sub {
+  font-family:var(--font-title); font-style:italic;
+  font-size:clamp(.98rem,1.4vw,1.25rem);
+  color:var(--fg-mute); max-width:640px; line-height:1.5;
+}
+.cover-rule {
+  width:80px; height:1px;
+  background:linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+.cover-meta {
+  display:flex; gap:34px;
+  font-family:var(--font-accent); font-size:.64rem;
+  letter-spacing:.26em; text-transform:uppercase;
+  color:var(--fg-dim); flex-wrap:wrap; justify-content:center;
+}
+.cover-meta span strong {
+  display:block; font-family:var(--font-title); font-style:italic;
+  font-weight:600; font-size:1rem; letter-spacing:0;
+  text-transform:none; color:var(--sand); margin-top:4px;
+}
+.cover-hint {
+  position:absolute; bottom:calc(var(--pad-y) + 4px);
+  left:0; right:0;
+  font-family:var(--font-accent); font-size:.62rem;
+  letter-spacing:.3em; text-transform:uppercase; color:var(--fg-dim);
+  display:flex; align-items:center; justify-content:center; gap:10px;
+  animation:pulseHint 2.6s ease-in-out infinite;
+}
+.cover-hint::after { content:'→'; color:var(--gold); }
+@keyframes pulseHint {
+  0%,100% { opacity:.5; transform:translateX(0); }
+  50% { opacity:1; transform:translateX(6px); }
+}
+
+/* ═════ ФИНАЛ ═════ */
+.final-slide { display:block; text-align:center; padding:var(--pad-y) var(--pad-x); }
+.final-inner {
+  max-width:900px; margin:0 auto; height:100%;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:clamp(14px,2.4vh,24px);
+}
+.final-ornament {
+  width:120px; height:16px;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 16'><line x1='0' y1='8' x2='46' y2='8' stroke='%23d4a24c' stroke-width='1' opacity='.7'/><line x1='74' y1='8' x2='120' y2='8' stroke='%23d4a24c' stroke-width='1' opacity='.7'/><path d='M60,1 L68,8 L60,15 L52,8 Z' fill='none' stroke='%23d4a24c' stroke-width='1'/><circle cx='60' cy='8' r='1.8' fill='%23d4a24c'/></svg>");
+  background-repeat:no-repeat; background-size:contain;
+}
+.final-title {
+  font-family:var(--font-title); font-weight:500;
+  font-size:clamp(1.8rem,4.2vw,3.4rem);
+  line-height:1.05; letter-spacing:-.025em; color:var(--sand);
+}
+.final-title em { font-style:italic; color:var(--gold); }
+.final-sub {
+  font-family:var(--font-title); font-style:italic;
+  color:var(--fg-mute); font-size:clamp(.98rem,1.25vw,1.15rem);
+  max-width:620px;
+}
+.final-sign {
+  display:inline-flex; flex-direction:column; gap:6px;
+  padding:18px 34px; border-radius:14px;
+  border:1px dashed var(--line);
+  background:rgba(212,162,76,.03); margin-top:8px;
+}
+.final-sign-label {
+  font-family:var(--font-accent); font-size:.58rem;
+  letter-spacing:.3em; text-transform:uppercase; color:var(--gold);
+}
+.final-sign-name {
+  font-family:var(--font-title); font-style:italic; font-weight:600;
+  font-size:1.5rem; color:var(--sand);
+}
+.final-sign-group {
+  font-family:var(--font-body); font-size:.82rem;
+  color:var(--fg-mute); letter-spacing:.04em;
+}
+
+/* ═════ УПРАВЛЕНИЕ ═════ */
+.top-bar {
+  position:fixed; top:0; left:0; right:0; z-index:50;
+  padding:14px var(--pad-x);
+  display:flex; align-items:center; justify-content:space-between;
+  gap:20px; pointer-events:none;
+  background:linear-gradient(180deg, rgba(15,11,6,.55), transparent);
+}
+.top-bar > * { pointer-events:auto; }
+.brand { display:flex; align-items:center; gap:12px; }
+.brand-sigil {
+  width:26px; height:26px; color:var(--gold);
+  animation:sigilSpin 30s linear infinite;
+}
+.brand-text {
+  font-family:var(--font-title); font-weight:600;
+  font-size:1rem; color:var(--sand); letter-spacing:-.005em;
+}
+.brand-text small {
+  display:block; font-family:var(--font-accent);
+  font-size:.55rem; letter-spacing:.3em;
+  text-transform:uppercase; color:var(--fg-dim); margin-top:1px;
+}
+.slide-counter {
+  font-family:var(--font-accent); font-size:.68rem;
+  letter-spacing:.28em; text-transform:uppercase;
+  color:var(--fg-dim); display:flex; align-items:center; gap:8px;
+}
+.slide-counter .current { color:var(--gold); font-weight:600; }
+.slide-counter .sep { opacity:.5; }
+
+.nav-arrow {
+  position:fixed; top:50%; transform:translateY(-50%); z-index:40;
+  width:48px; height:48px; border-radius:50%;
+  border:1px solid var(--line);
+  background:rgba(20,16,10,.6);
+  backdrop-filter:blur(10px);
+  color:var(--gold); display:grid; place-items:center;
+  cursor:pointer; opacity:.55;
+  transition:opacity .3s, background .3s, transform .3s var(--ease), border-color .3s;
+}
+.nav-arrow:hover {
+  opacity:1; background:rgba(212,162,76,.12);
+  border-color:var(--gold);
+  transform:translateY(-50%) scale(1.06);
+}
+.nav-arrow:disabled { opacity:.2; cursor:default; }
+.nav-arrow.prev { left:clamp(8px,1.2vw,22px); }
+.nav-arrow.next { right:clamp(8px,1.2vw,22px); }
+@media (max-width:620px) { .nav-arrow { display:none; } }
+
+.dots {
+  position:fixed; bottom:16px; left:50%;
+  transform:translateX(-50%); z-index:45;
+  display:flex; gap:9px; padding:9px 12px;
+  border-radius:999px;
+  border:1px solid var(--line-soft);
+  background:rgba(15,11,6,.55);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+}
+.dot {
+  width:8px; height:8px; border-radius:50%;
+  background:rgba(212,162,76,.25);
+  border:1px solid rgba(212,162,76,.4);
+  cursor:pointer;
+  transition:all .35s var(--ease);
+  position:relative;
+}
+.dot:hover { background:rgba(212,162,76,.6); }
+.dot.is-active {
+  background:var(--gold); transform:scale(1.5);
+  box-shadow:0 0 0 4px rgba(212,162,76,.16);
+}
+.dot::after {
+  content:attr(data-label);
+  position:absolute; bottom:calc(100% + 12px); left:50%;
+  transform:translateX(-50%) translateY(4px);
+  font-family:var(--font-accent); font-size:.56rem;
+  letter-spacing:.2em; text-transform:uppercase; color:var(--gold);
+  white-space:nowrap; padding:5px 9px; border-radius:6px;
+  background:rgba(15,11,6,.9);
+  border:1px solid var(--line-soft);
+  opacity:0; pointer-events:none;
+  transition:opacity .25s, transform .25s;
+}
+.dot:hover::after {
+  opacity:1; transform:translateX(-50%) translateY(0);
+}
+@media (max-width:620px) {
+  .dots { bottom:10px; padding:7px 9px; gap:7px; }
+  .dot { width:6px; height:6px; }
+}
+
+.progress-line {
+  position:fixed; bottom:0; left:0;
+  height:2px; width:0%;
+  background:linear-gradient(90deg, var(--gold), var(--gold-bright));
+  z-index:50; transition:width .5s var(--ease);
+}
+
+/* ═════ ЛАЙТБОКС ═════ */
+.lightbox {
+  position:fixed; inset:0; z-index:200;
+  display:none; align-items:center; justify-content:center;
+  padding:30px;
+  background:rgba(8,5,2,.94);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+}
+.lightbox.is-open { display:flex; }
+.lightbox-inner {
+  max-width:1000px; width:100%; max-height:92vh;
+  display:flex; flex-direction:column;
+  border-radius:18px;
+  border:1px solid var(--line-hard);
+  background:linear-gradient(180deg, #14100a, #0a0704);
+  overflow:hidden;
+  position:relative;
+  animation:lbIn .35s var(--ease);
+  box-shadow:0 40px 100px -40px rgba(0,0,0,1);
+}
+@keyframes lbIn {
+  from { opacity:0; transform:translateY(20px) scale(.97); }
+  to { opacity:1; transform:none; }
+}
+.lightbox-close {
+  position:absolute; top:14px; right:14px; z-index:5;
+  width:40px; height:40px; border-radius:50%;
+  border:1px solid var(--line);
+  background:rgba(15,11,6,.85);
+  color:var(--gold); font-size:1.2rem;
+  display:grid; place-items:center;
+  transition:background .3s, border-color .3s, transform .3s;
+}
+.lightbox-close:hover {
+  background:rgba(212,162,76,.15);
+  border-color:var(--gold);
+  transform:rotate(90deg);
+}
+.lightbox-photo {
+  position:relative; width:100%;
+  max-height:58vh;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(40,28,14,.9), #0a0704 75%);
+  display:flex; align-items:center; justify-content:center;
+  overflow:hidden; flex-shrink:0;
+}
+.lightbox-photo img {
+  max-width:100%; max-height:58vh;
+  width:auto; height:auto;
+  object-fit:contain;
+  display:block;
+}
+.lightbox-caption {
+  padding:26px 34px 30px;
+  overflow-y:auto;
+  border-top:1px solid var(--line);
+}
+.lightbox-title {
+  font-family:var(--font-title); font-weight:600;
+  font-size:clamp(1.3rem,2vw,1.75rem);
+  color:var(--sand); line-height:1.15;
+  margin-bottom:6px; padding-right:50px;
+}
+.lightbox-era {
+  font-family:var(--font-accent);
+  font-size:.62rem; letter-spacing:.3em;
+  text-transform:uppercase; color:var(--gold);
+  margin-bottom:14px;
+}
+.lightbox-text {
+  font-family:var(--font-title);
+  font-size:1.1rem; line-height:1.65;
+  color:var(--fg);
+}
+.lightbox-source {
+  margin-top:16px; padding-top:14px;
+  border-top:1px solid var(--line-soft);
+  font-family:var(--font-body);
+  font-size:.8rem; color:var(--fg-dim);
+  font-style:italic;
+}
+@media (max-width:700px) {
+  .lightbox { padding:12px; }
+  .lightbox-photo { max-height:42vh; }
+  .lightbox-photo img { max-height:42vh; }
+  .lightbox-caption { padding:20px 20px 24px; }
+}
+
+/* ═════ АНИМАЦИЯ ═════ */
+.slide > * > * {
+  opacity:0; transform:translateY(20px);
+  transition:opacity .7s var(--ease), transform .7s var(--ease);
+}
+.slide.is-active > * > * { opacity:1; transform:none; }
+.slide.is-active .text > *:nth-child(1) { transition-delay:.12s; }
+.slide.is-active .text > *:nth-child(2) { transition-delay:.20s; }
+.slide.is-active .text > *:nth-child(3) { transition-delay:.28s; }
+.slide.is-active .text > *:nth-child(4) { transition-delay:.36s; }
+.slide.is-active .text > *:nth-child(5) { transition-delay:.44s; }
+.slide.is-active .text > *:nth-child(6) { transition-delay:.52s; }
+.slide.is-active .text > *:nth-child(7) { transition-delay:.60s; }
+.slide.is-active .visual > *:nth-child(1) { transition-delay:.25s; }
+.slide.is-active .visual > *:nth-child(2) { transition-delay:.38s; }
+.slide.is-active .visual > *:nth-child(3) { transition-delay:.50s; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration:.001ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- ═════ ФОН ═════ -->
+<div class="bg" aria-hidden="true">
+  <svg class="bg-svg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
+    <defs>
+      <radialGradient id="skyG" cx="50%" cy="0%" r="90%">
+        <stop offset="0%" stop-color="#2b2415"/>
+        <stop offset="35%" stop-color="#1c1810"/>
+        <stop offset="100%" stop-color="#0d0a05"/>
+      </radialGradient>
+      <radialGradient id="glowG" cx="80%" cy="15%" r="55%">
+        <stop offset="0%" stop-color="#1e4468" stop-opacity=".55"/>
+        <stop offset="100%" stop-color="#1e4468" stop-opacity="0"/>
+      </radialGradient>
+      <radialGradient id="glowG2" cx="10%" cy="85%" r="55%">
+        <stop offset="0%" stop-color="#b25a3b" stop-opacity=".28"/>
+        <stop offset="100%" stop-color="#b25a3b" stop-opacity="0"/>
+      </radialGradient>
+      <linearGradient id="dune1" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#3b2a13"/>
+        <stop offset="100%" stop-color="#1a130a"/>
+      </linearGradient>
+      <linearGradient id="dune2" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#553a17"/>
+        <stop offset="100%" stop-color="#241a0f"/>
+      </linearGradient>
+      <pattern id="ornamentGrid" width="120" height="120" patternUnits="userSpaceOnUse">
+        <path d="M60,0 L120,60 L60,120 L0,60 Z" fill="none" stroke="rgba(212,162,76,.045)" stroke-width="1"/>
+        <circle cx="60" cy="60" r="2" fill="rgba(212,162,76,.08)"/>
+      </pattern>
+    </defs>
+    <rect width="1440" height="900" fill="url(#skyG)"/>
+    <rect width="1440" height="900" fill="url(#glowG)"/>
+    <rect width="1440" height="900" fill="url(#glowG2)"/>
+    <rect width="1440" height="900" fill="url(#ornamentGrid)"/>
+    <path d="M0,640 C180,580 340,690 560,640 C780,590 900,670 1120,620 C1280,585 1380,630 1440,615 L1440,900 L0,900 Z"
+          fill="url(#dune1)" opacity=".85"/>
+    <path d="M0,740 C220,690 420,760 660,720 C900,680 1080,750 1300,720 C1380,710 1420,725 1440,720 L1440,900 L0,900 Z"
+          fill="url(#dune2)"/>
+  </svg>
+  <div class="bg-stars"></div>
+  <div class="bg-tone" id="bgTone"></div>
+  <div class="bg-grain"></div>
+</div>
+
+<!-- ═════ ЛАЙТБОКС ═════ -->
+<div class="lightbox" id="lightbox">
+  <div class="lightbox-inner">
+    <button class="lightbox-close" id="lightboxClose" aria-label="Закрыть">✕</button>
+    <div class="lightbox-photo">
+      <img id="lbImage" src="" alt="">
+    </div>
+    <div class="lightbox-caption">
+      <div class="lightbox-title" id="lbTitle"></div>
+      <div class="lightbox-era" id="lbEra"></div>
+      <div class="lightbox-text" id="lbText"></div>
+      <div class="lightbox-source" id="lbSource"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═════ ВЕРХНЯЯ ПАНЕЛЬ ═════ -->
+<header class="top-bar">
+  <div class="brand">
+    <svg class="brand-sigil" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true">
+      <circle cx="20" cy="20" r="16" opacity=".7"/>
+      <circle cx="20" cy="20" r="9" opacity=".5"/>
+      <g stroke-linecap="round">
+        <line x1="20" y1="2" x2="20" y2="38"/>
+        <line x1="2" y1="20" x2="38" y2="20"/>
+        <line x1="7.3" y1="7.3" x2="32.7" y2="32.7"/>
+        <line x1="32.7" y1="7.3" x2="7.3" y2="32.7"/>
+      </g>
+      <circle cx="20" cy="20" r="2" fill="currentColor" stroke="none"/>
+    </svg>
+    <div class="brand-text">
+      Древний Хорезм
+      <small>историческая презентация</small>
+    </div>
+  </div>
+  <div class="slide-counter">
+    <span class="current" id="counterNow">01</span>
+    <span class="sep">/</span>
+    <span id="counterAll">11</span>
+  </div>
+</header>
+
+<!-- ═════ СТРЕЛКИ ═════ -->
+<button class="nav-arrow prev" id="arrowPrev" aria-label="Предыдущий слайд">
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+    <path d="M13 4 L7 10 L13 16" stroke="currentColor" stroke-width="1.6"
+          stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+</button>
+<button class="nav-arrow next" id="arrowNext" aria-label="Следующий слайд">
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+    <path d="M7 4 L13 10 L7 16" stroke="currentColor" stroke-width="1.6"
+          stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+</button>
+
+<!-- ═════ DEK ═════ -->
+<main class="deck" id="deck">
+
+  <!-- ─── 01 · ОБЛОЖКА ─── -->
+  <section class="slide cover is-active" data-slide="0" data-tone="radial-gradient(circle at 50% 40%, rgba(212,162,76,.14), transparent 60%)">
+    <div class="cover-inner">
+      <svg class="cover-sigil" viewBox="0 0 200 200" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true">
+        <circle cx="100" cy="100" r="88" opacity=".6"/>
+        <circle cx="100" cy="100" r="72" opacity=".5"/>
+        <path d="M100,20 L122,80 L184,80 L134,118 L154,180 L100,142 L46,180 L66,118 L16,80 L78,80 Z"
+              stroke-width=".8" opacity=".7"/>
+        <circle cx="100" cy="100" r="30" opacity=".4"/>
+        <circle cx="100" cy="100" r="4" fill="currentColor" stroke="none"/>
+      </svg>
+      <div class="cover-rule"></div>
+      <h1 class="cover-title">
+        Древний Хорезм
+        <em>земля тысячи каналов</em>
+      </h1>
+      <div class="cover-rule"></div>
+      <p class="cover-sub">
+        История одной из древнейших земель Центральной Азии —
+        от бронзового века до монгольского завоевания XIII века.
+      </p>
+      <div class="cover-meta">
+        <span>автор<strong>Ташпулатов Доминик</strong></span>
+        <span>группа<strong>IST-952R</strong></span>
+        <span>год<strong>2026</strong></span>
+      </div>
+    </div>
+    <div class="cover-hint">листайте →</div>
+  </section>
+
+  <!-- ─── 02 · ЗЕМЛЯ И РЕКА ─── -->
+  <section class="slide reverse" data-slide="1" data-tone="radial-gradient(circle at 30% 60%, rgba(58,111,168,.24), transparent 60%)">
+    <div class="text">
+      <span class="eyebrow"><span class="num">01</span>география</span>
+      <div class="head-wrap">
+        <h2>Земля между <em>рекой</em><br><span class="thin">и Кызылкумами</span></h2>
+      </div>
+      <p class="lead">
+        Хорезм — оазис в низовьях Амударьи, крупнейшей реки Центральной Азии,
+        на перекрёстке Великого шёлкового пути.
+      </p>
+      <div class="body-copy">
+        <p>
+          Амударья, которую древние называли <strong>Оксом</strong>, течёт с
+          Памира две с половиной тысячи километров. Её воды и плодородный ил
+          превратили безжизненную пустыню в цветущий оазис. Среднегодовой
+          сток — около 74 кубических километров.
+        </p>
+        <p>
+          Хорезм лежал <strong>между кочевой степью и оседлым югом</strong> —
+          между Ираном и Индией. Через него шли караваны, товары, идеи.
+          Климат резко континентальный: летом до +47 °C, зимой до −30 °C.
+        </p>
+      </div>
+    </div>
+    <div class="visual visual--single">
+      <figure class="photo-card photo-card--hero" data-key="amu-darya">
+        <div class="photo-frame">
+          <img src="/project-assets/ancient-khorezm/img/amu-darya.jpg" alt="Река Амударья" loading="eager">
+        </div>
+        <figcaption class="photo-cap">
+          <div class="photo-cap-title">Амударья — главная река Хорезма</div>
+          <span class="photo-cap-sub">Древнее название — Окс. Длина 2540 км, бассейн 309 тыс. км².</span>
+        </figcaption>
+      </figure>
+      <div class="photo-grid-2">
+        <figure class="photo-card photo-card--small" data-key="irrigation-canal">
+          <div class="photo-frame">
+            <img src="/project-assets/ancient-khorezm/img/irrigation-canal.jpg" alt="Оросительный канал" loading="lazy">
+          </div>
+          <figcaption class="photo-cap">
+            <div class="photo-cap-title">Оросительный канал</div>
+            <span class="photo-cap-sub">Рыли вручную; сеть тянулась на сотни километров.</span>
+          </figcaption>
+        </figure>
+        <figure class="photo-card photo-card--small" data-key="dunes-sunset">
+          <div class="photo-frame">
+            <img src="/project-assets/ancient-khorezm/img/dunes-sunset.jpg" alt="Дюны на закате" loading="lazy">
+          </div>
+          <figcaption class="photo-cap">
+            <div class="photo-cap-title">Дюны Кызылкума</div>
+            <span class="photo-cap-sub">Пустыня, окружавшая оазис со всех сторон.</span>
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── 03 · АВЕСТА ─── -->
+  <section class="slide" data-slide="2" data-tone="radial-gradient(circle at 70% 40%, rgba(212,162,76,.20), transparent 60%)">
+    <div class="text">
+      <span class="eyebrow"><span class="num">02</span>вера и Авеста</span>
+      <div class="head-wrap">
+        <h2>Хорезм <em>в Авесте</em></h2>
+      </div>
+      <p class="lead">
+        В священной книге зороастризма Хорезм назван одной из «хороших земель»,
+        созданных Ахура-Маздой — верховным божеством света.
+      </p>
+      <div class="body-copy">
+        <p>
+          Зороастризм учил о борьбе <strong>света и тьмы</strong>, истины и
+          лжи. Огонь почитался как символ чистоты. В «Михр-Яште» Хорезм стоит
+          в списке «арийских земель» — рядом с Мервом, Гератом и Бактрией.
+        </p>
+        <p>
+          Зороастрийцы не поклонялись огню как богу — они видели в нём
+          <strong>главный знак святости</strong>. При раскопках в Хорезме
+          находят алтари и ямы с чистым пеплом.
+        </p>
+      </div>
+      <div class="quote" style="margin-top:16px;">
+        <p class="quote-text">
+          «Я, Ахура-Мазда, создал землю Хорезм — прекрасную,
+          с глубокими водами и тучными пастбищами.»
+        </p>
+        <span class="quote-src">— Авеста · Видевдат</span>
+      </div>
+    </div>
+    <div class="visual visual--single">
+      <figure class="photo-card photo-card--hero" data-key="avesta-fire">
+        <div class="photo-frame">
+          <img src="/project-assets/ancient-khorezm/img/avesta-fire.jpg" alt="Зороастрийский алтарь огня" loading="lazy">
+        </div>
+        <figcaption class="photo-cap">
+          <div class="photo-cap-title">Алтарь огня · символ веры</div>
+          <span class="photo-cap-sub">Огонь — символ чистоты и присутствия Ахура-Мазды.</span>
+        </figcaption>
+      </figure>
+      <div class="photo-grid-2">
+        <figure class="photo-card photo-card--small" data-key="avesta-manuscript">
+          <div class="photo-frame">
+            <img src="/project-assets/ancient-khorezm/img/avesta-manuscript.jpg" alt="Страница Авесты" loading="lazy">
+          </div>
+          <figcaption class="photo-cap">
+            <div class="photo-cap-title">Страница Авесты</div>
+            <span class="photo-cap-sub">Хорезм упомянут в «Михр-Яште».</span>
+          </figcaption>
+        </figure>
+        <figure class="photo-card photo-card--small" data-key="zoroastrian-symbol">
+          <div class="photo-frame">
+            <img src="/project-assets/ancient-khorezm/img/zoroastrian-symbol.jpg" alt="Фаравахар" loading="lazy">
+          </div>
+          <figcaption class="photo-cap">
+            <div class="photo-cap-title">Фаравахар</div>
+            <span class="photo-cap-sub">Крылатый символ: благие мысли, слова, дела.</span>
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── 04 · АХЕМЕНИДЫ ─── -->
+  <section class="slide reverse" data-slide="3" data-tone="radial-gradient(circle at 40% 30%, rgba(58,111,168,.20), transparent 60%)">
+    <div class="text">
+      <span class="eyebrow"><span class="num">03</span>VI–IV вв. до н. э.</span>
+      <div class="head-wrap">
+        <h2>Хорезм <em>под Ахеменидами</em></h2>
+      </div>
+      <p class="lead">
+        Хорезм входит в состав великой персидской державы — но сохраняет
+        собственное управление, письменность и традиции.
+      </p>
+      <div class="body-copy">
+        <p>
+          Персы включили оазис в состав <strong>сатрапии Хорезм</strong>.
+          Царь платил дань, но оставался хозяином своей земли. В 328 году
+          до н. э. Александр Македонский заключил союз с царём хорезмиев
+          <strong>Фарасманом</strong> — первое упоминание Хорезма в греческих
+          источниках.
+        </p>
+      </div>
+      <div class="fact" style="margin-top:16px;">
+        <div class="fact-num"><span>25 га</span></div>
+        <div class="fact-body">
+          <h4>Площадь Кюзели-Гыр</h4>
+          <p>крепостные стены около 3 км, три параллельных коридора, бойницы</p>
+        </div>
+      </div>
+    </div>
+    <div class="visual visual--single">
+      <figure class="photo-card photo-card--hero" data-key="persepolis-relief">
+        <div class="photo-frame">
+          <img src="/project-assets/ancient-khorezm/img/persepolis-relief.jpg" alt="Барельеф Персеполя" loading="lazy">
+        </div>
+        <figcaption class="photo-cap">
+          <div class="photo-cap-title">Барельеф Персеполя</div>
+          <span class="photo-cap-sub">Церемониальная столица Ахеменидов; делегации народов с дарами.</span>
+        </figcaption>
+      </figure>
+      <div class="photo-grid-2">
+        <figure class="photo-card photo-card--small" data-key="achaemenid-coin">
+          <div class="photo-frame">
+            <img src="/project-assets/ancient-khorezm/img/achaemenid-coin.jpg" alt="Золотой дарик" loading="lazy">
+          </div>
+          <figcaption class="photo-cap">
+            <div class="photo-cap-title">Дарик · монета</div>
+            <span class="photo-cap-sub">Золото Ахеменидов, введено Дарием I около 515 г. до н. э.</span>
+          </figcaption>
+        </figure>
+        <figure class="photo-card photo-card--small" data-key="kyzyl-kala-ruins">
+          <div class="photo-frame">
+            <img src="/project-assets/ancient-khorezm/img/kyzyl-kala-ruins.jpg" alt="Руины крепости" loading="lazy">
+          </div>
+          <figcaption class="photo-cap">
+            <div class="photo-cap-title">Руины крепости</div>
+            <span class="photo-cap-sub">Кюзели-Гыр — крупнейший памятник архаического Хорезма.</span>
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── 05 · ХОРЕЗМШАХИ ─── -->
+  <section class="slide" data-slide="4" data-tone="radial-gradient(circle at 60% 60%, rgba(212,162,76,.20), transparent 60%)">
+    <div class="text">
+      <span class="eyebrow"><span class="num">04</span>IV в. до н. э. — X в.</span>
+      <div class="head-wrap">
+        <h2>Хорезмшахи — <em>свои цари</em></h2>
+      </div>
+      <p class="lead">
+        После распада империи Александра Македонского Хорезм становится
+        самостоятельным царством с собственной династией.
+      </p>
+      <div class="body-copy">
+        <p>
+          <strong>Династия Афригидов</strong> правила с 305 по 995 год —
+          двадцать два царя под титулом «Хорезмшах». Их столицей был
+          <strong>Кят</strong> на левом берегу Амударьи. Афригиды чеканили
+          свою серебряную монету: на аверсе — портрет царя, на реверсе —
+          всадник. Найдено более тысячи таких монет.
+        </p>
+      </div>
+      <div class="fact-stack">
+        <div class="fact">
+          <div class="fact-num"><span>690</span></div>
+          <div class="fact-body">
+            <h4>лет правления Афригидов</h4>
+            <p>с 305 по 995 год — самая долгая династия в истории Хорезма</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="visual visual--single">
+      <figure class="photo-card photo-card--hero" data-key="khorezmshah-coin">
+        <div class="photo-frame">
+          <img src="/project-assets/ancient-khorezm/img/khorezmshah-coin.jpg" alt="Монета Хорезмшахов" loading="lazy">
+        </div>
+        <figcaption class="photo-cap">
+          <div class="photo-cap-title">Монета Хорезмшахов</div>
+          <span class="photo-cap-sub">Афригиды, 305–995 гг. Аверс — портрет царя, реверс — всадник.</span>
+        </figcaption>
+      </figure>
+      <div class="photo-grid-2">
+        <figure class="photo-card photo-card--small" data-key="urgench-minaret">
+          <div class="photo-frame">
+            <img src="/project-assets/ancient-khorezm/img/urgench-minaret.jpg" alt="Минарет Кёнеургенча" loading="lazy">
+          </div>
+          <figcaption class="photo-cap">
+            <div class="photo-cap-title">Минарет Кёнеургенча</div>
+            <span class="photo-cap-sub">Высота 60 м; XI–XIV вв., столица Хорезмшахов.</span>
+          </figcaption>
+        </figure>
+        <figure class="photo-card photo-card--small" data-key="silk-road-caravan">
+          <div class="photo-frame">
+            <img src="/project-assets/ancient-khorezm/img/silk-road-caravan.jpg" alt="Товары Шёлкового пути" loading="lazy">
+          </div>
+          <figcaption class="photo-cap">
+            <div class="photo-cap-title">Товары Шёлкового пути</div>
+            <span class="photo-cap-sub">Шёлк, специи, серебро, стекло — через Хорезм.</span>
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── 06 · АЛЬ-ХОРЕЗМИ ─── -->
+  <section class="slide reverse" data-slide="5" data-tone="radial-gradient(circle at 30% 40%, rgba(58,111,168,.24), transparent 60%)">
+    <div class="text">
+      <span class="eyebrow"><span class="num">05</span>наука · IX век</span>
+      <div class="head-wrap">
+        <h2>Аль-Хорезми<br><span class="thin">и слово «алгоритм»</span></h2>
+      </div>
+      <p class="lead">
+        Уроженец Хорезма, работавший в Багдаде, оставил миру два слова:
+        <em>алгебра</em> и <em>алгоритм</em>. Оба — из его имени и его книги.
+      </p>
+      <div class="body-copy">
+        <p>
+          <strong>Мухаммад ибн Муса аль-Хорезми</strong> (ок. 783–847) родился
+          в Хорезме, а затем возглавил «Дом мудрости» — академию халифа
+          аль-Мамуна в Багдаде. Его трактат
+          <strong>«Китаб аль-джебр ва-ль-мукабала»</strong> дал название
+          алгебре. Латинское <em>Algoritmi</em> — от его имени — стало словом
+          «алгоритм».
+        </p>
+      </div>
+    </div>
+    <div class="visual visual--single">
+      <figure class="photo-card photo-card--hero" data-key="al-khwarizmi-portrait">
+        <div class="photo-frame">
+          <img src="/project-assets/ancient-khorezm/img/al-khwarizmi-portrait.jpg" alt="Портрет аль-Хорезми" loading="lazy">
+        </div>
+        <figcaption class="photo-cap">
+          <div class="photo-cap-title">Аль-Хорезми</div>
+          <span class="photo-cap-sub">Ок. 783–847. «Отец алгебры»; его имя дало слово «алгоритм».</span>
+        </figcaption>
+      </figure>
+      <div class="photo-grid-2">
+        <figure class="photo-card photo-card--small" data-key="al-jabr-page">
+          <div class="photo-frame">
+            <img src="/project-assets/ancient-khorezm/img/al-jabr-page.jpg" alt="Страница Аль-джебр" loading="lazy">
+          </div>
+          <figcaption class="photo-cap">
+            <div class="photo-cap-title">«Аль-джебр» · страница</div>
+            <span class="photo-cap-sub">«Китаб аль-джебр ва-ль-мукабала» — откуда «алгебра».</span>
+          </figcaption>
+        </figure>
+        <figure class="photo-card photo-card--small" data-key="house-of-wisdom">
+          <div class="photo-frame">
+            <img src="/project-assets/ancient-khorezm/img/house-of-wisdom.jpg" alt="Дом мудрости" loading="lazy">
+          </div>
+          <figcaption class="photo-cap">
+            <div class="photo-cap-title">Дом мудрости</div>
+            <span class="photo-cap-sub">Багдад, IX век. Академия халифа аль-Мамуна.</span>
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── 07 · БИРУНИ ─── -->
+  <section class="slide" data-slide="6" data-tone="radial-gradient(circle at 70% 50%, rgba(212,162,76,.22), transparent 60%)">
+    <div class="text">
+      <span class="eyebrow"><span class="num">06</span>исламский Ренессанс</span>
+      <div class="head-wrap">
+        <h2>Аль-Бируни —<br><span class="thin">измеривший Землю</span></h2>
+      </div>
+      <p class="lead">
+        В X–XI веках Хорезм переживает научный расцвет. Здесь работает
+        один из величайших учёных Средневековья — Абу Рейхан аль-Бируни.
+      </p>
+      <div class="body-copy">
+        <p>
+          Бируни (973–1048) родился в предместье Кята. Он вычислил
+          <strong>радиус Земли</strong> по наблюдению горизонта с горы —
+          результат очень близок к современному. В Европе подобный метод
+          появился лишь в XVII веке. Из его «Хронологии древних народов»
+          мы знаем точный список царей Афригидов.
+        </p>
+      </div>
+      <div class="fact-stack">
+        <div class="fact">
+          <div class="fact-num"><span>111,6</span></div>
+          <div class="fact-body">
+            <h4>км — дуга экватора в 1°</h4>
+            <p>по расчётам Бируни; современное значение — 111,3 км</p>
+          </div>
+        </div>
+        <div class="fact">
+          <div class="fact-num"><span>40+</span></div>
+          <div class="fact-body">
+            <h4>научных трудов</h4>
+            <p>астрономия, математика, география, история, минералогия</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="visual visual--single">
+      <figure class="photo-card photo-card--hero" data-key="biruni-portrait">
+        <div class="photo-frame">
+          <img src="/project-assets/ancient-khorezm/img/biruni-portrait.jpg" alt="Портрет аль-Бируни" loading="lazy">
+        </div>
+        <figcaption class="photo-cap">
+          <div class="photo-cap-title">Аль-Бируни</div>
+          <span class="photo-cap-sub">973–1048. Энциклопедист, астроном, автор «Канона Мас‘уда».</span>
+        </figcaption>
+      </figure>
+      <div class="photo-grid-2">
+        <figure class="photo-card photo-card--small" data-key="astrolabe">
+          <div class="photo-frame">
+            <img src="/project-assets/ancient-khorezm/img/astrolabe.jpg" alt="Астролябия" loading="lazy">
+          </div>
+          <figcaption class="photo-cap">
+            <div class="photo-cap-title">Астролябия</div>
+            <span class="photo-cap-sub">Инструмент для определения координат и времени.</span>
+          </figcaption>
+        </figure>
+        <figure class="photo-card photo-card--small" data-key="star-chart">
+          <div class="photo-frame">
+            <img src="/project-assets/ancient-khorezm/img/star-chart.jpg" alt="Звёздная карта" loading="lazy">
+          </div>
+          <figcaption class="photo-cap">
+            <div class="photo-cap-title">Звёздная карта</div>
+            <span class="photo-cap-sub">Из «Канона Мас‘уда» — свода астрономических знаний.</span>
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── 08 · МОНГОЛЫ ─── -->
+  <section class="slide reverse" data-slide="7" data-tone="radial-gradient(circle at 50% 60%, rgba(196,103,74,.26), transparent 60%)">
+    <div class="text">
+      <span class="eyebrow"><span class="num">07</span>1219–1221</span>
+      <div class="head-wrap">
+        <h2>Монгольское <em>разорение</em></h2>
+      </div>
+      <p class="lead">
+        В 1219 году войска Чингисхана вторглись в Хорезм.
+        Через два года столица — Ургенч — пала после долгой осады.
+      </p>
+      <div class="body-copy">
+        <p>
+          Поводом стало разорение монгольского каравана в Отраре.
+          В сентябре 1219 года пал Отрар, в 1220 — Бухара и Самарканд,
+          а в апреле 1221 — столица государства Хорезмшахов
+          <strong>Гургандж (Ургенч)</strong>. Город был разрушен, каналы
+          уничтожены, библиотеки сожжены.
+        </p>
+      </div>
+      <div class="quote dark" style="margin-top:16px;">
+        <p class="quote-text">
+          «Город был разрушен до основания. Не осталось
+          ни одного целого дома, ни одной живой семьи.»
+        </p>
+        <span class="quote-src">— из хроник о падении Ургенча · 1221</span>
+      </div>
+    </div>
+    <div class="visual visual--single">
+      <figure class="photo-card photo-card--hero" data-key="mongol-horsemen">
+        <div class="photo-frame">
+          <img src="/project-assets/ancient-khorezm/img/mongol-horsemen.jpg" alt="Монгольские всадники" loading="lazy">
+        </div>
+        <figcaption class="photo-cap">
+          <div class="photo-cap-title">Монгольские всадники</div>
+          <span class="photo-cap-sub">Армия Чингисхана: десятки, сотни, тысячи, тумены.</span>
+        </figcaption>
+      </figure>
+      <div class="photo-grid-2">
+        <figure class="photo-card photo-card--small" data-key="burning-city">
+          <div class="photo-frame">
+            <img src="/project-assets/ancient-khorezm/img/burning-city.jpg" alt="Огонь над городом" loading="lazy">
+          </div>
+          <figcaption class="photo-cap">
+            <div class="photo-cap-title">Огонь над Ургенчем</div>
+            <span class="photo-cap-sub">Апрель 1221: столица Хорезма пала после осады.</span>
+          </figcaption>
+        </figure>
+        <figure class="photo-card photo-card--small" data-key="ruins-urgench">
+          <div class="photo-frame">
+            <img src="/project-assets/ancient-khorezm/img/ruins-urgench.jpg" alt="Руины Ургенча" loading="lazy">
+          </div>
+          <figcaption class="photo-cap">
+            <div class="photo-cap-title">Руины Ургенча</div>
+            <span class="photo-cap-sub">Кёнеургенч (Туркменистан) — городище после 1221 г.</span>
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── 09 · НАСЛЕДИЕ ─── -->
+  <section class="slide" data-slide="8" data-tone="radial-gradient(circle at 40% 50%, rgba(212,162,76,.18), transparent 60%)">
+    <div class="text">
+      <span class="eyebrow"><span class="num">08</span>наследие</span>
+      <div class="head-wrap">
+        <h2>Что осталось <em>от Хорезма</em></h2>
+      </div>
+      <p class="lead">
+        Империя ушла, книги сгорели, города превратились в руины.
+        Но слова и знания Хорезма живут до сих пор.
+      </p>
+      <div class="body-copy">
+        <p>
+          Сегодня в Узбекистане и Туркменистане стоят Хива, Ургенч,
+          Кёнеургенч — города-музеи под открытым небом.
+          <strong>Ичан-Кала</strong> в Хиве включена в Список Всемирного
+          наследия ЮНЕСКО с 1990 года. А слово «алгоритм» — в каждом
+          учебнике информатики.
+        </p>
+      </div>
+      <div class="legacy">
+        <div class="legacy-item">
+          <h4>Алгоритм</h4>
+          <p>от имени аль-Хорезми → Algoritmi</p>
+        </div>
+        <div class="legacy-item">
+          <h4>Алгебра</h4>
+          <p>от «аль-джебр» — восполнение</p>
+        </div>
+        <div class="legacy-item">
+          <h4>География</h4>
+          <p>измерения Бируни опередили время</p>
+        </div>
+      </div>
+    </div>
+    <div class="visual visual--single">
+      <figure class="photo-card photo-card--hero" data-key="khiva-today">
+        <div class="photo-frame">
+          <img src="/project-assets/ancient-khorezm/img/khiva-today.jpg" alt="Хива сегодня" loading="lazy">
+        </div>
+        <figcaption class="photo-cap">
+          <div class="photo-cap-title">Хива · Ичан-Кала сегодня</div>
+          <span class="photo-cap-sub">Историческое ядро; в Списке ЮНЕСКО с 1990 года.</span>
+        </figcaption>
+      </figure>
+      <div class="photo-grid-2">
+        <figure class="photo-card photo-card--small" data-key="toprak-kala">
+          <div class="photo-frame">
+            <img src="/project-assets/ancient-khorezm/img/toprak-kala.jpg" alt="Топрак-кала" loading="lazy">
+          </div>
+          <figcaption class="photo-cap">
+            <div class="photo-cap-title">Топрак-кала</div>
+            <span class="photo-cap-sub">III–IV вв. Дворец царей Хорезма; раскопки С. П. Толстова.</span>
+          </figcaption>
+        </figure>
+        <figure class="photo-card photo-card--small" data-key="urgench-modern">
+          <div class="photo-frame">
+            <img src="/project-assets/ancient-khorezm/img/urgench-modern.jpg" alt="Современный Ургенч" loading="lazy">
+          </div>
+          <figcaption class="photo-cap">
+            <div class="photo-cap-title">Ургенч сегодня</div>
+            <span class="photo-cap-sub">Административный центр Хорезмской области Узбекистана.</span>
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── 10 · ИСТОЧНИКИ ─── -->
+  <section class="slide reverse" data-slide="9" data-tone="radial-gradient(circle at 60% 40%, rgba(58,111,168,.18), transparent 60%)">
+    <div class="text">
+      <span class="eyebrow"><span class="num">09</span>источники</span>
+      <div class="head-wrap">
+        <h2>Откуда мы <em>знаем</em></h2>
+      </div>
+      <p class="lead">
+        История Хорезма восстанавливается по нескольким независимым
+        источникам — и это делает её особенно надёжной.
+      </p>
+      <div class="sources">
+        <div class="source">
+          <span class="source-label">тексты</span>
+          <span class="source-text"><strong>Авеста</strong> — священная книга зороастризма, упоминает Хорезм в «Михр-Яште».</span>
+        </div>
+        <div class="source">
+          <span class="source-label">хроники</span>
+          <span class="source-text"><strong>аль-Бируни</strong> — «Хронология древних народов», «Индия», «Канон Мас‘уда».</span>
+        </div>
+        <div class="source">
+          <span class="source-label">нумизматика</span>
+          <span class="source-text"><strong>Монеты Афригидов</strong> и дарики — более 1000 экземпляров с именами царей.</span>
+        </div>
+        <div class="source">
+          <span class="source-label">археология</span>
+          <span class="source-text"><strong>Раскопки</strong> Топрак-кала, Кой-Крылган-кала, Кюзели-Гыр — экспедиция С. П. Толстова.</span>
+        </div>
+        <div class="source">
+          <span class="source-label">античные авторы</span>
+          <span class="source-text"><strong>Геродот, Арриан, Курций Руф</strong> — упоминания Хорезма и союза с Александром.</span>
+        </div>
+      </div>
+    </div>
+    <div class="visual visual--single">
+      <figure class="photo-card photo-card--hero" data-key="manuscript-library">
+        <div class="photo-frame">
+          <img src="/project-assets/ancient-khorezm/img/manuscript-library.jpg" alt="Рукописи" loading="lazy">
+        </div>
+        <figcaption class="photo-cap">
+          <div class="photo-cap-title">Рукописи · источник знаний</div>
+          <span class="photo-cap-sub">Труды аль-Бируни, аль-Хорезми в арабских и латинских списках.</span>
+        </figcaption>
+      </figure>
+      <figure class="photo-card photo-card--hero" data-key="excavation-site">
+        <div class="photo-frame">
+          <img src="/project-assets/ancient-khorezm/img/excavation-site.jpg" alt="Раскопки" loading="lazy">
+        </div>
+        <figcaption class="photo-cap">
+          <div class="photo-cap-title">Раскопки · голос земли</div>
+          <span class="photo-cap-sub">Хорезмская экспедиция с 1937 года; тысячи артефактов.</span>
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ─── 11 · ИТОГ ─── -->
+  <section class="slide final-slide" data-slide="10" data-tone="radial-gradient(circle at 50% 50%, rgba(212,162,76,.24), transparent 60%)">
+    <div class="final-inner">
+      <div class="final-ornament"></div>
+      <span class="eyebrow" style="margin:0;"><span class="num">10</span>итог</span>
+      <h2 class="final-title">
+        Три тысячи лет —<br><em>в одном оазисе</em>
+      </h2>
+      <p class="final-sub">
+        Хорезм показал, как вода и мысль создают цивилизацию —
+        и как одно вторжение может её прервать.
+        Но слово «алгоритм» до сих пор напоминает: Хорезм никуда не исчез.
+      </p>
+      <div class="final-sign">
+        <span class="final-sign-label">автор</span>
+        <span class="final-sign-name">Ташпулатов Доминик</span>
+        <span class="final-sign-group">группа IST-952R · 2026</span>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ═════ ТОЧКИ ═════ -->
+<nav class="dots" id="dots" aria-label="Навигация по слайдам">
+  <span class="dot is-active" data-target="0" data-label="обложка"></span>
+  <span class="dot" data-target="1" data-label="земля и река"></span>
+  <span class="dot" data-target="2" data-label="авеста"></span>
+  <span class="dot" data-target="3" data-label="ахемениды"></span>
+  <span class="dot" data-target="4" data-label="хорезмшахи"></span>
+  <span class="dot" data-target="5" data-label="аль-хорезми"></span>
+  <span class="dot" data-target="6" data-label="бируни"></span>
+  <span class="dot" data-target="7" data-label="монголы"></span>
+  <span class="dot" data-target="8" data-label="наследие"></span>
+  <span class="dot" data-target="9" data-label="источники"></span>
+  <span class="dot" data-target="10" data-label="итог"></span>
+</nav>
+
+<div class="progress-line" id="progressLine"></div>
+
+<script>
+/* ═════ ДАННЫЕ ДЛЯ ЛАЙТБОКСА ═════ */
+const imageData = {
+  'amu-darya': {
+    title: 'Река Амударья',
+    era: 'главная водная артерия Хорезма',
+    text: 'Амударья (древнее название — Окс) — крупнейшая река Центральной Азии. Её длина составляет 2540 км от истоков Пянджа, площадь бассейна — 309 тысяч км². Среднегодовой сток — около 74 км³ воды. Именно эта река сделала возможным существование Хорезмской цивилизации: её воды и плодородный ил превратили пустыню в цветущий оазис. В древности по Амударье проходил важный торговый путь, связывавший Бактрию, Хорезм и кочевые степи.',
+    source: 'Источник: Большая российская энциклопедия, «Амударья»; UNECE, «Амударья — обзор»'
+  },
+  'irrigation-canal': {
+    title: 'Оросительный канал',
+    era: 'основа хорезмской экономики',
+    text: 'Хорезмийцы создали разветвлённую сеть оросительных каналов, которые тянулись на сотни километров. Каналы рыли вручную, используя примитивные орудия — кетмени и носилки. Система орошения позволяла выращивать пшеницу, ячмень, виноград, дыни и другие культуры. Управление водой требовало сложной организации — это способствовало формированию государственности.',
+    source: 'Источник: археологические исследования Хорезмской экспедиции; С. П. Толстов'
+  },
+  'dunes-sunset': {
+    title: 'Дюны Кызылкума',
+    era: 'пустыня, окружавшая оазис',
+    text: 'Кызылкум («Красные пески») — одна из крупнейших пустынь Центральной Азии. Она окружала Хорезмский оазис со всех сторон, кроме реки. Климат пустыни резко континентальный: летом температура достигает +47 °C, зимой опускается до −30 °C. Осадков выпадает всего 70–220 мм в год. Без ирригации жизнь здесь была бы невозможна.',
+    source: 'Источник: Каплин, «Пустыни Турана»; Большая российская энциклопедия'
+  },
+  'avesta-fire': {
+    title: 'Зороастрийский алтарь огня',
+    era: 'символ веры',
+    text: 'Огонь в зороастризме — символ чистоты и божественной силы Ахура-Мазды. Зороастрийцы не поклонялись огню как богу, но почитали его как главный символ святости. Алтари огня находились в храмах и святилищах. При раскопках в Хорезме найдены многочисленные следы огнепоклоннических практик, включая ямы с чистым пеплом. В Кой-Крылган-кале обнаружено святилище с алтарём — вероятно, главный храм огня Хорезма.',
+    source: 'Источник: Кой-Крылган-кала, материалы раскопок; Авеста'
+  },
+  'avesta-manuscript': {
+    title: 'Страница Авесты',
+    era: 'священная книга зороастризма',
+    text: 'Авеста — собрание священных текстов зороастрийской религии. Она включает гимны, ритуальные предписания и космологические тексты. В «Михр-Яште» Хорезм упоминается в числе «арийских земель» наряду с Мервом, Гератом и Бактрией. Древнейшие части Авесты восходят ко II тысячелетию до н. э. Тексты передавались устно, а записаны были лишь в сасанидскую эпоху.',
+    source: 'Источник: Авеста, «Михр-Яшт»; исследования по истории зороастризма'
+  },
+  'zoroastrian-symbol': {
+    title: 'Фаравахар',
+    era: 'главный символ зороастризма',
+    text: 'Фаравахар — крылатый символ зороастрийской веры. Он изображает крылатого старца или крылатый диск с человеческой фигурой. Символ трактуется как изображение Фраваши — духа-хранителя, или как сам Ахура-Мазда. Крылья символизируют три принципа зороастризма: благие мысли, благие слова, благие дела.',
+    source: 'Источник: иконография зороастризма; Авеста'
+  },
+  'persepolis-relief': {
+    title: 'Барельеф Персеполя',
+    era: 'Ахеменидская империя',
+    text: 'Персеполь — церемониальная столица Ахеменидской империи, основанная Дарием I. Барельефы Персеполя изображают царей, придворных и делегации покорённых народов, приносящих дары. Среди них могли быть и представители Хорезма — одной из восточных сатрапий империи. Персеполь был разрушен Александром Македонским в 330 году до н. э.',
+    source: 'Источник: Большая российская энциклопедия; археология Персеполя'
+  },
+  'achaemenid-coin': {
+    title: 'Золотой дарик',
+    era: 'валюта Ахеменидов',
+    text: 'Дарик — золотая монета Ахеменидской империи, введённая Дарием I около 515 года до н. э. На аверсе изображён царь в позе стрелка из лука. Дарик весил около 8,4 грамма и был одной из самых распространённых монет древнего мира. Хорезм, как часть империи, использовал дарики в торговле.',
+    source: 'Источник: нумизматические исследования Ахеменидов; Геродот, «История»'
+  },
+  'kyzyl-kala-ruins': {
+    title: 'Руины крепости Кюзели-Гыр',
+    era: 'VI–V вв. до н. э.',
+    text: 'Кюзели-Гыр — крупнейший памятник архаического периода Хорезма. Площадь городища — 25 га, протяжённость крепостных стен — около 3 км. Стены имели три параллельных коридора и множество бойниц. На территории находился монументальный комплекс площадью 1 га с парадным залом (270 м²) и двором (800 м²), который интерпретируется как дворец или храм.',
+    source: 'Источник: Большая российская энциклопедия, «Кюзели-Гыр»; Толстов С. П.'
+  },
+  'khorezmshah-coin': {
+    title: 'Монета Хорезмшахов (Афригидов)',
+    era: '305–995 гг. н. э.',
+    text: 'Афригиды чеканили серебряные монеты с портретом царя на аверсе и всадником на реверсе. Эти монеты — важнейший источник по истории династии. Всего найдено более 1000 экземпляров. На монетах сохранились имена правителей, что позволяет восстановить хронологию. Династия Афригидов правила 690 лет — с 305 по 995 год.',
+    source: 'Источник: Nematov, «Coins of Early Medieval Khwarazm»; Бируни, «Хронология»'
+  },
+  'urgench-minaret': {
+    title: 'Минарет Кёнеургенча',
+    era: 'XI–XIV вв.',
+    text: 'Кёнеургенч (Старый Ургенч) — один из древнейших городов Туркменистана. В XI–XIII веках он был столицей Государства Хорезмшахов. Минарет Кутлуг-Тимура высотой 60 метров — один из самых высоких в Центральной Азии. В Кёнеургенче находилась «Академия хорезмшаха Мамуна», где работали аль-Бируни и Ибн Сина. В 2005 году город включён в Список Всемирного наследия ЮНЕСКО.',
+    source: 'Источник: Туркменское государственное информационное агентство; ЮНЕСКО'
+  },
+  'silk-road-caravan': {
+    title: 'Товары Шёлкового пути',
+    era: 'торговля между Востоком и Западом',
+    text: 'Великий шёлковый путь проходил через Хорезм — ключевой узел на пути из Китая в Средиземноморье. Через оазис везли шёлк, специи, серебро, стекло, драгоценные камни. Вместе с товарами распространялись идеи, религии, технологии. Хорезмийские купцы были известны по всему Востоку. Города Хорезма — Ургенч, Кят, Хива — были крупными торговыми центрами.',
+    source: 'Источник: исследования Великого шёлкового пути; хроники средневековых путешественников'
+  },
+  'al-khwarizmi-portrait': {
+    title: 'Аль-Хорезми',
+    era: 'ок. 783–847',
+    text: 'Мухаммад ибн Муса аль-Хорезми родился в Хорезме, получил образование на родине, а затем возглавил «Дом мудрости» в Багдаде — академию халифа аль-Мамуна. Он написал около 20 научных трудов, из которых сохранилось 7. Его имя в латинизированной форме — Algoritmi — дало название алгоритму, а его трактат «Аль-джебр» — алгебре. Он также впервые описал десятичную позиционную систему с нулём.',
+    source: 'Источник: Национальная библиотека Узбекистана; Библиотека Конгресса США'
+  },
+  'al-jabr-page': {
+    title: 'Страница «Аль-джебр»',
+    era: 'ок. 830 г.',
+    text: '«Китаб аль-джебр ва-ль-мукабала» («Краткая книга об исчислении алгебры и аль-мукабалы») — главный математический труд аль-Хорезми. В нём алгебра впервые представлена как самостоятельная наука. Слово «аль-джебр» означает «восполнение» — перенос членов уравнения из одной части в другую. От этого термина произошло слово «алгебра». Трактат был переведён на латынь в XII веке.',
+    source: 'Источник: Библиотека Конгресса США; Национальная библиотека Узбекистана'
+  },
+  'house-of-wisdom': {
+    title: 'Дом мудрости',
+    era: 'Багдад, IX век',
+    text: '«Байт аль-хикма» («Дом мудрости») — академия, основанная халифом аль-Мамуном в Багдаде. Здесь работали учёные из разных регионов — Центральной Азии, Ирана, Сирии. В распоряжении исследователей была богатейшая библиотека и обсерватория. Аль-Хорезми руководил этим научным центром до конца жизни.',
+    source: 'Источник: Национальная библиотека Узбекистана; история Аббасидского халифата'
+  },
+  'biruni-portrait': {
+    title: 'Аль-Бируни',
+    era: '973–1048',
+    text: 'Абу Рейхан Мухаммад ибн Ахмад аль-Бируни родился в предместье Кята — столицы Хорезма. Энциклопедист, он оставил более 40 трудов по астрономии, математике, географии, минералогии, этнографии и истории. Он вычислил радиус Земли по наблюдению горизонта с горы — результат был очень близок к современному. В Европе подобный метод появился лишь в XVII веке.',
+    source: 'Источник: Большая российская энциклопедия, «Бируни»; АН Азербайджана'
+  },
+  'astrolabe': {
+    title: 'Астролябия',
+    era: 'инструмент астронома',
+    text: 'Астролябия — древний астрономический инструмент для определения положения звёзд, времени и географических координат. Аль-Бируни усовершенствовал астролябию и секстант, которыми пользовались в его время. Он построил первый неподвижный (стенный) квадрант для точных наблюдений Солнца и планет — в течение 400 лет он был самым большим в мире.',
+    source: 'Источник: Большая российская энциклопедия, «Бируни»'
+  },
+  'star-chart': {
+    title: 'Звёздная карта',
+    era: 'астрономические таблицы',
+    text: 'Аль-Бируни составил «Канон Мас‘уда» — свод астрономических знаний. В нём приведены расстояния до Луны, Меркурия, Венеры, Солнца, Марса, объяснены причины солнечных и лунных затмений. Его «Зидж» содержал таблицы тригонометрических функций. В 1126 году «Зидж» был переведён на латынь, в 1914 — на немецкий, в 1962 — на английский.',
+    source: 'Источник: Большая российская энциклопедия, «Бируни»'
+  },
+  'mongol-horsemen': {
+    title: 'Монгольские всадники',
+    era: 'XIII век',
+    text: 'Монгольская армия Чингисхана была одной из самых дисциплинированных и мобильных в истории. Всадники использовали сложные луки, копья и железные доспехи. Армия делилась на десятки, сотни, тысячи и десятки тысяч (тумены). В 1219 году монголы вторглись в Хорезм. Поводом стало разорение каравана в Отраре — «Отрарская катастрофа».',
+    source: 'Источник: хроники монгольского завоевания; история Средней Азии'
+  },
+  'burning-city': {
+    title: 'Огонь над Ургенчем',
+    era: '1221 год',
+    text: 'В апреле 1221 года монголы взяли столицу Хорезма — Гургандж (Ургенч). Город был разрушен до основания. Каналы, которые питали оазис, были уничтожены. Библиотеки сожжены. Уцелевшие учёные бежали в Багдад, Дамаск и Каир. Хорезм как культурный центр исчез на столетия.',
+    source: 'Источник: хроники о падении Ургенча; история монгольского завоевания'
+  },
+  'ruins-urgench': {
+    title: 'Руины Ургенча',
+    era: 'после 1221 года',
+    text: 'Современный Кёнеургенч (Старый Ургенч) в Туркменистане — это руины древней столицы Хорезмшахов. После монгольского завоевания город так и не восстановил прежнего величия. Сегодня на территории городища находятся мечети, мавзолеи и минарет XI–XVI веков. В 2005 году Кёнеургенч включён в Список Всемирного наследия ЮНЕСКО.',
+    source: 'Источник: Туркменское государственное информационное агентство; ЮНЕСКО'
+  },
+  'khiva-today': {
+    title: 'Хива · Ичан-Кала',
+    era: 'сегодня',
+    text: 'Ичан-Кала — историческое ядро древней Хивы, полностью сохранившийся средневековый город-крепость. Включён в Список Всемирного наследия ЮНЕСКО в 1990 году. В отличие от многих исторических объектов, Ичан-Кала до сих пор остаётся жилой территорией — здесь работают ремесленные мастерские, базары и чайханы. Это «живой музей», позволяющий погрузиться в культуру и быт прошлых эпох. Стены крепости достигают 10 метров в высоту.',
+    source: 'Источник: ЮНЕСКО; статья Ad-Hoc-News, 2026'
+  },
+  'toprak-kala': {
+    title: 'Топрак-кала',
+    era: 'III–IV вв. н. э.',
+    text: 'Топрак-кала — дворец царей Хорезма, раскопанный Хорезмской экспедицией под руководством С. П. Толстова. Дворец включал около 200 помещений, был двухэтажным, с трёхэтажными башнями. Стены украшали росписи и скульптуры. Найдено более 100 документов на дереве и пергаменте — хозяйственные записи на хорезмийском языке. Дворец был центром административной и религиозной жизни.',
+    source: 'Источник: New York Times, 1949; Большая российская энциклопедия; раскопки Толстова'
+  },
+  'urgench-modern': {
+    title: 'Ургенч сегодня',
+    era: 'современный город',
+    text: 'Современный Ургенч — административный центр Хорезмской области Узбекистана. Это один из древнейших городов региона, хотя его историческое ядро находится в Кёнеургенче (Туркменистан). Ургенч сегодня — важный транспортный и культурный центр, откуда туристы отправляются в Хиву и к археологическим памятникам древнего Хорезма.',
+    source: 'Источник: административные данные Узбекистана'
+  },
+  'manuscript-library': {
+    title: 'Рукописи',
+    era: 'источник знаний',
+    text: 'Рукописи — важнейший источник по истории Хорезма. Труды аль-Бируни, аль-Хорезми и других учёных сохранились в арабских, персидских и латинских списках. Бируни написал «Хронологию древних народов», «Индию», «Канон Мас‘уда». Аль-Хорезми — «Аль-джебр», «Книгу об индийском счёте», «Книгу картины Земли». Эти тексты переводились на латынь в XII веке и оказали огромное влияние на европейскую науку.',
+    source: 'Источник: Библиотека Конгресса США; Национальная библиотека Узбекистана'
+  },
+  'excavation-site': {
+    title: 'Раскопки',
+    era: 'археология XX века',
+    text: 'Хорезмская археологическая экспедиция под руководством С. П. Толстова начала работу в 1937 году. За десятилетия раскопок исследованы Топрак-кала, Кой-Крылган-кала, Кюзели-Гыр, Калалы-Гыр и другие памятники. Найдены тысячи артефактов: керамика, монеты, документы, скульптуры, фрески. Эти находки позволили восстановить историю Хорезма от бронзового века до монгольского завоевания.',
+    source: 'Источник: New York Times, 1949; Большая российская энциклопедия; Хорезмская экспедиция'
+  }
+};
+
+/* ═════ ДВИЖОК ═════ */
+const deck   = document.getElementById('deck');
+const slides = Array.from(deck.querySelectorAll('.slide'));
+const dots   = Array.from(document.querySelectorAll('.dot'));
+const counterNow = document.getElementById('counterNow');
+const counterAll = document.getElementById('counterAll');
+const progress   = document.getElementById('progressLine');
+const arrowPrev  = document.getElementById('arrowPrev');
+const arrowNext  = document.getElementById('arrowNext');
+const bgTone     = document.getElementById('bgTone');
+
+let current = 0;
+const total = slides.length;
+counterAll.textContent = String(total).padStart(2,'0');
+
+function setSlide(i) {
+  if (i < 0 || i >= total || i === current) return;
+  const prev = slides[current];
+  const next = slides[i];
+  prev.classList.remove('is-active');
+  prev.classList.add(i > current ? 'is-prev' : 'is-next');
+  setTimeout(() => prev.classList.remove('is-prev','is-next'), 800);
+  next.classList.remove('is-prev','is-next');
+  next.classList.add('is-active');
+  current = i;
+  dots.forEach((d,idx) => d.classList.toggle('is-active', idx === i));
+  counterNow.textContent = String(i+1).padStart(2,'0');
+  progress.style.width = ((i+1)/total*100) + '%';
+  arrowPrev.disabled = i === 0;
+  arrowNext.disabled = i === total-1;
+  const tone = next.dataset.tone;
+  if (tone && bgTone) {
+    bgTone.style.background = tone;
+    bgTone.style.opacity = '1';
+  }
+}
+function nextSlide() { setSlide(Math.min(current+1, total-1)); }
+function prevSlide() { setSlide(Math.max(current-1, 0)); }
+
+arrowNext.addEventListener('click', nextSlide);
+arrowPrev.addEventListener('click', prevSlide);
+dots.forEach(d => d.addEventListener('click', () => setSlide(Number(d.dataset.target))));
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+    e.preventDefault(); nextSlide();
+  } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+    e.preventDefault(); prevSlide();
+  } else if (e.key === 'Home') { e.preventDefault(); setSlide(0); }
+  else if (e.key === 'End') { e.preventDefault(); setSlide(total-1); }
+  else if (e.key === 'Escape') { closeLightbox(); }
+});
+
+let wheelLocked = false;
+document.addEventListener('wheel', e => {
+  if (Math.abs(e.deltaY) < 12) return;
+  if (wheelLocked) return;
+  wheelLocked = true;
+  setTimeout(() => wheelLocked = false, 900);
+  if (e.deltaY > 0) nextSlide(); else prevSlide();
+}, { passive:true });
+
+let touchStartX = 0, touchStartY = 0, touchLocked = false;
+document.addEventListener('touchstart', e => {
+  touchStartX = e.touches[0].clientX;
+  touchStartY = e.touches[0].clientY;
+  touchLocked = false;
+}, { passive:true });
+document.addEventListener('touchmove', e => {
+  if (touchLocked) return;
+  const dx = e.touches[0].clientX - touchStartX;
+  const dy = e.touches[0].clientY - touchStartY;
+  if (Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy)) return;
+  touchLocked = true;
+  if (dx < 0) nextSlide(); else prevSlide();
+}, { passive:true });
+
+/* ═════ ЛАЙТБОКС ═════ */
+const lightbox = document.getElementById('lightbox');
+const lbImage  = document.getElementById('lbImage');
+const lbTitle  = document.getElementById('lbTitle');
+const lbEra    = document.getElementById('lbEra');
+const lbText   = document.getElementById('lbText');
+const lbSource = document.getElementById('lbSource');
+const lbClose  = document.getElementById('lightboxClose');
+
+function openLightbox(key) {
+  const data = imageData[key];
+  if (!data) return;
+  const card = document.querySelector(`.photo-card[data-key="${key}"]`);
+  const src = card ? card.querySelector('img').src : '';
+  lbImage.src = src;
+  lbImage.alt = data.title;
+  lbTitle.textContent = data.title;
+  lbEra.textContent = data.era;
+  lbText.textContent = data.text;
+  lbSource.textContent = data.source;
+  lightbox.classList.add('is-open');
+}
+function closeLightbox() {
+  lightbox.classList.remove('is-open');
+}
+lbClose.addEventListener('click', closeLightbox);
+lightbox.addEventListener('click', e => {
+  if (e.target === lightbox) closeLightbox();
+});
+document.querySelectorAll('.photo-card[data-key]').forEach(card => {
+  card.addEventListener('click', () => openLightbox(card.dataset.key));
+});
+
+/* ═════ ИНИЦИАЛИЗАЦИЯ ═════ */
+setSlide(0);
+arrowPrev.disabled = true;
+progress.style.width = (1/total*100) + '%';
+
+const firstTone = slides[0].dataset.tone;
+if (firstTone && bgTone) {
+  bgTone.style.background = firstTone;
+  bgTone.style.opacity = '1';
+}
+</script>
+
+</body>
+</html>

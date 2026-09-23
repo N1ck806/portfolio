@@ -1,0 +1,373 @@
+{% extends "base.html" %}
+{% block title %}Khorezm Folio · Архив работ{% endblock %}
+
+{% block content %}
+
+{# ─── Уникальные теги для фильтра ─────────────────────────── #}
+{% set ns = namespace(tags=[]) %}
+{% for p in projects %}
+  {% for t in p.tags %}
+    {% if t not in ns.tags %}{% set _ = ns.tags.append(t) %}{% endif %}
+  {% endfor %}
+{% endfor %}
+{% set unique_tags = ns.tags %}
+
+<!-- ═══════════════════════════════════════════════════════
+     HERO
+     ═══════════════════════════════════════════════════════ -->
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero-grid">
+
+    <div class="hero-text">
+      <p class="hero-kicker">
+        <span class="kicker-rule" aria-hidden="true"></span>
+        Khorezm&nbsp;Folio
+      </p>
+
+      <h1 id="hero-title" class="hero-title">
+        Учебные проекты, исследования и <em>цифровые работы</em>.
+      </h1>
+
+      <p class="hero-lead">
+        Персональное портфолио студента, в котором собраны веб-проекты,
+        интерактивные презентации, исторические исследования
+        и эксперименты с визуальной подачей.
+      </p>
+
+      <dl class="hero-meta" aria-label="Краткая информация">
+        <div class="hero-meta-cell">
+          <dt>Период</dt>
+          <dd>2026 — 2027</dd>
+        </div>
+        <div class="hero-meta-cell">
+          <dt>Направление</dt>
+          <dd>Student / Developer</dd>
+        </div>
+        <div class="hero-meta-cell">
+          <dt>Стек</dt>
+          <dd>Python · Web</dd>
+        </div>
+      </dl>
+
+      <div class="hero-actions">
+        <a href="#works" class="link-cta">
+          Смотреть проекты
+          <span class="link-arrow" aria-hidden="true">→</span>
+        </a>
+        <a href="#about" class="link-muted">Обо мне</a>
+      </div>
+    </div>
+
+    <!-- Декоративный компас, отсылка к теме Хорезма -->
+    <div class="hero-mark" aria-hidden="true">
+      <svg viewBox="0 0 240 240" fill="none">
+        <defs>
+          <linearGradient id="heroGold" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%"   stop-color="#c8a35a"/>
+            <stop offset="100%" stop-color="#8b6a2c"/>
+          </linearGradient>
+        </defs>
+
+        <circle cx="120" cy="120" r="108"
+                stroke="url(#heroGold)" stroke-width="0.8" opacity=".35"/>
+        <circle cx="120" cy="120" r="88"
+                stroke="url(#heroGold)" stroke-width="0.6" opacity=".22"/>
+
+        <path d="M120 32 L136 104 L208 120 L136 136 L120 208 L104 136 L32 120 L104 104 Z"
+              stroke="url(#heroGold)" stroke-width="1" fill="none" opacity=".55"/>
+
+        <path d="M120 84 L156 120 L120 156 L84 120 Z"
+              stroke="url(#heroGold)" stroke-width="1.1" fill="none"/>
+
+        <circle cx="120" cy="120" r="3" fill="url(#heroGold)"/>
+
+        <path d="M40 178 C74 168 92 186 120 180 C148 174 166 190 200 180"
+              stroke="url(#heroGold)" stroke-width="0.8" fill="none" opacity=".45"/>
+        <path d="M40 194 C74 186 92 200 120 194 C148 188 166 202 200 194"
+              stroke="url(#heroGold)" stroke-width="0.6" fill="none" opacity=".3"/>
+      </svg>
+    </div>
+
+  </div>
+
+  <div class="divider" aria-hidden="true">
+    <span class="divider-line"></span>
+    <span class="divider-diamond"></span>
+    <span class="divider-line"></span>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     РАБОТЫ
+     ═══════════════════════════════════════════════════════ -->
+<section id="works" class="works" aria-labelledby="works-title">
+
+  <header class="section-head">
+    <div class="section-head-left">
+      <p class="section-index">01 / Selected Works</p>
+      <h2 id="works-title" class="section-title">Избранные работы</h2>
+      <p class="section-desc">
+        Проекты, в которых важны не только результат,
+        но и способ его подачи.
+      </p>
+    </div>
+    <p class="section-count">{{ '%02d' % projects|length }} <span>в архиве</span></p>
+  </header>
+
+  {% if projects %}
+
+    {% if unique_tags %}
+    <nav class="filters" aria-label="Фильтр по тегам">
+      <button type="button"
+              class="filter is-active"
+              data-filter="all"
+              aria-pressed="true">All</button>
+      {% for t in unique_tags %}
+      <button type="button"
+              class="filter"
+              data-filter="{{ t }}"
+              aria-pressed="false">{{ t }}</button>
+      {% endfor %}
+    </nav>
+    {% endif %}
+
+    <div class="grid" id="works-grid">
+
+      {% for p in projects %}
+      {% set idx = '%02d' % loop.index %}
+      {% set is_featured = loop.first and projects|length >= 2 %}
+
+      <a class="work-card{% if is_featured %} is-featured{% endif %}"
+         href="/project/{{ p.slug }}"
+         data-tags="{{ p.tags|join(',') }}"
+         style="--delay: {{ loop.index0 * 60 }}ms"
+         aria-label="{{ p.title }}">
+
+        <div class="work-media">
+          {% if p.cover %}
+            <img src="{{ p.cover }}" alt="{{ p.title }}" loading="lazy">
+          {% else %}
+            <!-- Сдержанный геометрический визуал по умолчанию -->
+            <svg viewBox="0 0 640 400" fill="none" aria-hidden="true">
+              <defs>
+                <linearGradient id="c{{ loop.index }}g" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%"   stop-color="#efe8d8" stop-opacity="1"/>
+                  <stop offset="100%" stop-color="#e6dcc4" stop-opacity="1"/>
+                </linearGradient>
+              </defs>
+
+              <rect width="640" height="400" fill="url(#c{{ loop.index }}g)"/>
+
+              <!-- диагональная сетка -->
+              <g stroke="#a67b3a" stroke-width="0.5" opacity=".18">
+                {% for i in range(0, 15) %}
+                  <line x1="{{ i * 50 }}" y1="0" x2="{{ i * 50 + 400 }}" y2="400"/>
+                {% endfor %}
+              </g>
+
+              <!-- центральный ромб -->
+              <path d="M320 120 L440 200 L320 280 L200 200 Z"
+                    stroke="#a67b3a" stroke-width="1" fill="none" opacity=".55"/>
+              <path d="M320 150 L408 200 L320 250 L232 200 Z"
+                    stroke="#a67b3a" stroke-width="0.8" fill="none" opacity=".35"/>
+              <circle cx="320" cy="200" r="3" fill="#a67b3a" opacity=".75"/>
+
+              <g stroke="#a67b3a" stroke-width="0.5" opacity=".16">
+                <line x1="60" y1="330" x2="580" y2="330"/>
+                <line x1="60" y1="345" x2="580" y2="345"/>
+                <line x1="60" y1="360" x2="580" y2="360"/>
+              </g>
+
+              <text x="320" y="215"
+                    text-anchor="middle"
+                    font-family="'Cormorant Garamond', serif"
+                    font-size="28"
+                    fill="#a67b3a"
+                    opacity=".7">{{ p.icon }}</text>
+            </svg>
+          {% endif %}
+        </div>
+
+        <div class="work-body">
+          <div class="work-top">
+            <span class="work-num">{{ idx }}</span>
+            {% if p.date %}<span class="work-year">{{ p.date }}</span>{% endif %}
+          </div>
+
+          <h3 class="work-title">{{ p.title }}</h3>
+
+          {% if p.description %}
+          <p class="work-desc">{{ p.description }}</p>
+          {% endif %}
+
+          {% if p.tags %}
+          <p class="work-tags">{{ p.tags|join(' · ')|upper }}</p>
+          {% endif %}
+
+          <span class="work-arrow" aria-hidden="true">
+            <svg width="22" height="12" viewBox="0 0 22 12" fill="none">
+              <path d="M1 6h18M15 1l4 5-4 5"
+                    stroke="currentColor" stroke-width="1.2"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </div>
+
+        <span class="work-hairline" aria-hidden="true"></span>
+      </a>
+      {% endfor %}
+
+    </div>
+
+    <p class="filter-empty" id="filter-empty" hidden>
+      По этому направлению работ пока нет.
+    </p>
+
+  {% else %}
+    <div class="empty">
+      <p class="empty-title">Архив пока пуст</p>
+    </div>
+  {% endif %}
+
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     ПРОФИЛЬ
+     ═══════════════════════════════════════════════════════ -->
+<section id="about" class="profile" aria-labelledby="profile-title">
+
+  <header class="section-head">
+    <div class="section-head-left">
+      <p class="section-index">02 / Profile</p>
+      <h2 id="profile-title" class="section-title">Обо мне</h2>
+      <p class="section-desc">
+        Я студент, занимающийся разработкой, визуальной подачей
+        информации и созданием интерактивных учебных проектов.
+      </p>
+    </div>
+  </header>
+
+  <div class="profile-grid">
+
+    <dl class="profile-list">
+      <div class="profile-row">
+        <dt>ФИО</dt>
+        <dd>Ташпулатов Доминик Саидович</dd>
+      </div>
+      <div class="profile-row">
+        <dt>Группа</dt>
+        <dd>IST-952R</dd>
+      </div>
+      <div class="profile-row">
+        <dt>Образование</dt>
+        <dd>Студент университета</dd>
+      </div>
+      <div class="profile-row">
+        <dt>Интересы</dt>
+        <dd>Python · Web · Algorithms · Programms · UI</dd>
+      </div>
+      <div class="profile-row">
+        <dt>Инструменты</dt>
+        <dd>Python · FastAPI · Jinja2 · HTML · CSS · JavaScript</dd>
+      </div>
+    </dl>
+
+    <ol class="profile-steps" aria-label="Чем занимаюсь">
+      <li>
+        <span class="step-num">01</span>
+        <div>
+          <h3>Изучаю</h3>
+          <p>Программирование и алгоритмы.</p>
+        </div>
+      </li>
+      <li>
+        <span class="step-num">02</span>
+        <div>
+          <h3>Разрабатываю</h3>
+          <p>Веб-сайты, интерактивные презентации, визуальные проекты.</p>
+          <p>приложения, скрипты/модификации для готовых проектов</p>
+        </div>
+      </li>
+      <li>
+        <span class="step-num">03</span>
+        <div>
+          <h3>Развиваюсь</h3>
+          <p>Работаю над качеством кода, интерфейсов и подачи материала.</p>
+        </div>
+      </li>
+    </ol>
+
+  </div>
+
+  <div class="approach" aria-labelledby="approach-title">
+    <p class="section-index">Approach</p>
+    <h3 id="approach-title" class="approach-title">Подход к работе</h3>
+
+    <ol class="approach-list">
+      <li>
+        <span class="approach-num">01</span>
+        <div>
+          <h4>Содержание</h4>
+          <p>Сначала смысл и структура, затем визуальная подача.</p>
+        </div>
+      </li>
+      <li>
+        <span class="approach-num">02</span>
+        <div>
+          <h4>Технологии</h4>
+          <p>Выбираю инструменты под задачу, а не наоборот.</p>
+        </div>
+      </li>
+      <li>
+        <span class="approach-num">03</span>
+        <div>
+          <h4>Детали</h4>
+          <p>Типографика, отступы и анимации работают на содержание.</p>
+        </div>
+      </li>
+    </ol>
+  </div>
+
+</section>
+
+<!-- ═══════════════════════════════════════════════════════
+     КОНТАКТ
+     ═══════════════════════════════════════════════════════ -->
+<section id="contact" class="contact" aria-labelledby="contact-title">
+
+  <header class="section-head">
+    <div class="section-head-left">
+      <p class="section-index">03 / Contact</p>
+      <h2 id="contact-title" class="section-title">Связаться</h2>
+    </div>
+  </header>
+
+  <p class="contact-lead">
+    Если вы хотите обсудить проект, учебную работу
+    или возможное сотрудничество — буду рад обсудить детали.
+  </p>
+
+  <div class="contact-links">
+    <a href="mailto:nickalexandrov145@gmail.com" class="contact-link">
+      <span class="contact-link-label">Email</span>
+      <span class="contact-link-value">nickalexandrov145@gmail.com</span>
+      <span class="contact-link-arrow" aria-hidden="true">→</span>
+    </a>
+    <a href="https://github.com/N1ck806" class="contact-link" target="_blank" rel="noopener">
+      <span class="contact-link-label">GitHub</span>
+      <span class="contact-link-value">github.com</span>
+      <span class="contact-link-arrow" aria-hidden="true">↗</span>
+    </a>
+    <a href="https://t.me/N1ck_806"
+       class="contact-link"
+       target="_blank"
+       rel="noopener">
+      <span class="contact-link-label">Telegram</span>
+      <span class="contact-link-value">@N1ck_806</span>
+      <span class="contact-link-arrow" aria-hidden="true">↗</span>
+    </a>
+  </div>
+
+</section>
+
+{% endblock %}
